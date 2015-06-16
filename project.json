@@ -2,6 +2,6 @@
   "title": "Red Tape",
   "version": "0.0",
   "output": "build/",
-  "sources": ["src/*.lua", "assets/*"],
+  "sources": ["src/*.lua", "assets/*", "project.json"],
   "love_path": null
 }

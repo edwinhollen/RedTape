@@ -4,7 +4,7 @@ import os
 import glob
 import tempfile
 import shutil
-from subprocess import Popen
+from subprocess import Popen, PIPE
 
 def build(config):
     # make build dir if it doesn't exist
@@ -31,7 +31,7 @@ def build(config):
 def run(config):
     love_path = config["love_path"] or shutil.which("love")
     love_file = glob.glob(os.path.join(config["output"], "*.love"))[0]
-    Popen([love_path, love_file])
+    proc = Popen([love_path, love_file, "--console"], stdout=PIPE)
 
 def config(filename="project.json"):
     with open(filename, encoding="utf-8") as raw_json:
