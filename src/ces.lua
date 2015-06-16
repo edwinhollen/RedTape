@@ -20,6 +20,21 @@ end
 function ComponentEntitySystem:sort()
     local sorted = {}
     for key, system in ipairs(self.systems) do
-
+        local returnObj = {}
+        returnObj["system"] = system
+        returnObj["entities"] = {}
+        for entityKey, entity in self.entities do
+            local match = true
+            for componentClassKey, componentClass in system.accepts do
+                if not entity:hasComponentOfClass(componentClass) then
+                    match = false
+                    break
+                end
+            end
+            if match then
+                table.insert(returnObj["entities"], entity)
+            end
+        end
+        table.insert(sorted, returnObj)
     end
 end
