@@ -17,3 +17,12 @@ function Entity:hasComponentOfClass(componentClass)
     end
     return false
 end
+function Entity:getComponentsOfClass(componentClass)
+    local returnComponents = {}
+    for key,component in ipairs(self.components) do
+        if component:isInstanceOf(componentClass) then
+            table.insert(returnComponents, component)
+        end
+    end
+    return returnComponents
+end

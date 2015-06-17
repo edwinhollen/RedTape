@@ -4,6 +4,7 @@ import os
 import glob
 import tempfile
 import shutil
+import distutils.dir_util
 from subprocess import Popen, PIPE
 
 def build(config):
@@ -17,7 +18,11 @@ def build(config):
     with tempfile.TemporaryDirectory() as tempDir:
         # copy source files
         for source_file in source_files:
-            shutil.copy(source_file, tempDir)
+            if os.path.isdir(source_file):
+                distutils.dir_util.copy_tree(source_file, tempDir)
+            else:
+                print(source_file)
+                shutil.copy(source_file, tempDir)
         # make zip of temp dir
         zip = shutil.make_archive(
             os.path.join(config["output"], "{} v{}".format(config["title"], config["version"])),

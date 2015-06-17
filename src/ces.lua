@@ -23,9 +23,9 @@ function ComponentEntitySystem:sort()
         local returnObj = {}
         returnObj["system"] = system
         returnObj["entities"] = {}
-        for entityKey, entity in self.entities do
+        for entityKey, entity in ipairs(self.entities) do
             local match = true
-            for componentClassKey, componentClass in system.accepts do
+            for componentClassKey, componentClass in ipairs(system.accepts) do
                 if not entity:hasComponentOfClass(componentClass) then
                     match = false
                     break
@@ -37,4 +37,5 @@ function ComponentEntitySystem:sort()
         end
         table.insert(sorted, returnObj)
     end
+    return sorted
 end
