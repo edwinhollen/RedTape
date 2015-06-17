@@ -10,7 +10,10 @@ function ImageSystem:initialize()
 end
 function ImageSystem:getImage(imageName)
     if not self.loadedImages[imageName] then
-        self.loadedImages[imageName] = love.graphics.newImage(imageName)
+        local newimg = love.graphics.newImage(imageName)
+        newimg:setMipmapFilter("nearest")
+        newimg:setFilter("nearest", "nearest")
+        self.loadedImages[imageName] = newimg
     end
     return self.loadedImages[imageName]
 end
