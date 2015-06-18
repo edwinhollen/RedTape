@@ -4,6 +4,7 @@ require "entity"
 local currentScene
 
 function love.load()
+    love.joystick.loadGamepadMappings("gamecontrollerdb.txt")
     currentScene = GameScene:new()
 end
 

@@ -1,8 +1,9 @@
 local class = require "middleclass"
 
 ImageComponent = class("ImageComponent")
-function ImageComponent:initialize(imageName)
-    self.imageName = imageName or nil
+function ImageComponent:initialize(image, autoscale)
+    self.image = image or nil
+    self.autoscale = autoscale or true
     self.rotation = 0
     self.scaleX = 1
     self.scaleY = 1
