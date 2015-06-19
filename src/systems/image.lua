@@ -9,6 +9,7 @@ function ImageSystem:initialize()
     self.loadedImages = {}
     self.renderWidth = 200
     self.renderHeight = 150
+    love.graphics.setDefaultFilter("nearest", "nearest")
 end
 function ImageSystem:draw(entities)
     for entityKey, entity in ipairs(entities) do

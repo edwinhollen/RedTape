@@ -19,6 +19,16 @@ function GameScene:initialize()
     self.ces:addSystem(ImageSystem:new())
     self.ces:addSystem(self.interactableSystem)
 
+    -- add entities
+    self.paperHolderTop = Entity:new({
+        PositionComponent:new(40, 60),
+        ImageComponent:new(love.graphics.newImage("paperholdertop.png"))
+    })
+
+    self.paperHolderBottom = Entity:new({
+        PositionComponent:new(40, 60),
+        ImageComponent:new(love.graphics.newImage("paperholderbottom.png"))
+    })
     self.ces:addEntity(Entity:new({
         PositionComponent:new(0, 0),
         ImageComponent:new(love.graphics.newImage("bg-green.png"))
@@ -27,36 +37,8 @@ function GameScene:initialize()
         PositionComponent:new(0, 54),
         ImageComponent:new(love.graphics.newImage("woodtable.png"))
     }))
-    self.ces:addEntity(Entity:new({
-        PositionComponent:new(love.math.random(180), love.math.random(120)),
-        ImageComponent:new(love.graphics.newImage("test.png")),
-        InteractableComponent:new()
-    }))
-    self.ces:addEntity(Entity:new({
-        PositionComponent:new(love.math.random(180), love.math.random(120)),
-        ImageComponent:new(love.graphics.newImage("test.png")),
-        InteractableComponent:new()
-    }))
-
-    self.ces:addEntity(Entity:new({
-        PositionComponent:new(love.math.random(180), love.math.random(120)),
-        ImageComponent:new(love.graphics.newImage("test.png")),
-        InteractableComponent:new()
-    }))
-
-    self.ces:addEntity(Entity:new({
-        PositionComponent:new(love.math.random(180), love.math.random(120)),
-        ImageComponent:new(love.graphics.newImage("test.png")),
-        InteractableComponent:new()
-    }))
-
-    local highlightedinteractable = InteractableComponent:new()
-    highlightedinteractable.isHighlighted = true
-    self.ces:addEntity(Entity:new({
-        PositionComponent:new(love.math.random(180), love.math.random(120)),
-        ImageComponent:new(love.graphics.newImage("test.png")),
-        highlightedinteractable
-    }))
+    self.ces:addEntity(self.paperHolderTop)
+    self.ces:addEntity(self.paperHolderBottom)
 end
 
 function GameScene:update(dt)
