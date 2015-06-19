@@ -10,26 +10,14 @@ function InteractableSystem:initialize()
     System.initialize(self, {InteractableComponent, PositionComponent, ImageComponent})
     self.highlightWidth = 4
     self.highlightStyle = "rough"
-    self.requestingUp = false
-    self.requestingDown = false
-    self.requestingLeft = false
-    self.requestingRight = false
+    self.requesting = nil
 end
-function InteractableSystem:requestUp()
-    self.requestingUp = true
-end
-function InteractableSystem:requestDown()
-    self.requestingDown = true
-end
-function InteractableSystem:requestLeft()
-    self.requestingLeft = true
-end
-function InteractableSystem:requestRight()
-    self.requestingRight = true
+function InteractableSystem:request(direction)
+    self.requesting = direction
 end
 function InteractableSystem:update(dt, entities)
-    if self.requestingUp or self.requestingDown or self.requestingLeft or self.requestingRight then
-        local highlightedEntity = entities[1]
+    if self.requesting then
+        local highlightedEntity
         -- get highlighted entity
         for key, entity in ipairs(entities) do
             local intc = entity:getComponentsOfClass(InteractableComponent)[1]
@@ -62,7 +50,7 @@ function InteractableSystem:update(dt, entities)
         while table.getn(orderedEntities) < count do
             local smallestEntryKey
             for key, entry in ipairs(entitiesDistances) do
-                if smallestEntryKey == nil or entry["distance"] < entitiesDistances[key]["distance"] then
+                if smallestEntryKey == nil or entry["distance"] < entitiesDistances[smallestEntryKey]["distance"] then
                     smallestEntryKey = key
                 end
             end
@@ -70,22 +58,20 @@ function InteractableSystem:update(dt, entities)
             table.remove(entitiesDistances, smallestEntryKey)
         end
 
-        for k,v in ipairs(orderedEntities) do
-            print(k, v.id)
-        end
-
         -- find entity in the requested direction
+
         local matchingEntity
         for key, entity in ipairs(orderedEntities) do
             local eX = entity:getComponentsOfClass(PositionComponent)[1].x
             local eY = entity:getComponentsOfClass(PositionComponent)[1].y
 
-            if (self.requestingUp and eY < highlightedEntity:getComponentsOfClass(PositionComponent)[1].y)
-                or (self.requestingDown and eY > highlightedEntity:getComponentsOfClass(PositionComponent)[1].y)
-                or (self.requestingLeft and eX < highlightedEntity:getComponentsOfClass(PositionComponent)[1].x)
-                or (self.requestingRight and eX > highlightedEntity:getComponentsOfClass(PositionComponent)[1].x)
+            if (self.requesting == "up" and eY < highlightedEntity:getComponentsOfClass(PositionComponent)[1].y)
+                or (self.requesting == "down" and eY > highlightedEntity:getComponentsOfClass(PositionComponent)[1].y)
+                or (self.requesting == "left" and eX < highlightedEntity:getComponentsOfClass(PositionComponent)[1].x)
+                or (self.requesting == "right" and eX > highlightedEntity:getComponentsOfClass(PositionComponent)[1].x)
             then
                 matchingEntity = entity
+                break
             end
         end
 
@@ -94,16 +80,15 @@ function InteractableSystem:update(dt, entities)
         end
 
 
+
+
         -- unset current highlighted entity
         -- set new highlighted entity
         highlightedEntity:getComponentsOfClass(InteractableComponent)[1].isHighlighted = false
         matchingEntity:getComponentsOfClass(InteractableComponent)[1].isHighlighted = true
 
         -- unset requesting
-        self.requestingUp = false
-        self.requestingDown = false
-        self.requestingLeft = false
-        self.requestingRight = false
+        self.requesting = nil
     end
 end
 function InteractableSystem:draw(entities)
@@ -129,10 +114,5 @@ function InteractableSystem:draw(entities)
             love.graphics.polygon("line", verts)
             love.graphics.setColor(255, 255, 255)
         end
-
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.print(entity.id, pc.x*baseScaleX+1, pc.y*baseScaleY+1)
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.print(entity.id, pc.x*baseScaleX, pc.y*baseScaleY)
     end
 end

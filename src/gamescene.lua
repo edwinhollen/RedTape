@@ -1,4 +1,5 @@
 local class = require "middleclass"
+require "util"
 require "scene"
 require "ces"
 require "entity"
@@ -12,6 +13,7 @@ function GameScene:initialize()
     print("Starting game scene")
     self.ces = ComponentEntitySystem:new()
     self.interactableSystem = InteractableSystem:new()
+    self.lastInteraction = love.timer.getTime()
 
     -- add systems
     self.ces:addSystem(ImageSystem:new())
@@ -26,21 +28,33 @@ function GameScene:initialize()
         ImageComponent:new(love.graphics.newImage("woodtable.png"))
     }))
     self.ces:addEntity(Entity:new({
-        PositionComponent:new(40, 65),
-        ImageComponent:new(love.graphics.newImage("paper1.png")),
+        PositionComponent:new(love.math.random(180), love.math.random(120)),
+        ImageComponent:new(love.graphics.newImage("test.png")),
         InteractableComponent:new()
     }))
     self.ces:addEntity(Entity:new({
-        PositionComponent:new(75, 61),
-        ImageComponent:new(love.graphics.newImage("paper1.png")),
+        PositionComponent:new(love.math.random(180), love.math.random(120)),
+        ImageComponent:new(love.graphics.newImage("test.png")),
+        InteractableComponent:new()
+    }))
+
+    self.ces:addEntity(Entity:new({
+        PositionComponent:new(love.math.random(180), love.math.random(120)),
+        ImageComponent:new(love.graphics.newImage("test.png")),
+        InteractableComponent:new()
+    }))
+
+    self.ces:addEntity(Entity:new({
+        PositionComponent:new(love.math.random(180), love.math.random(120)),
+        ImageComponent:new(love.graphics.newImage("test.png")),
         InteractableComponent:new()
     }))
 
     local highlightedinteractable = InteractableComponent:new()
     highlightedinteractable.isHighlighted = true
     self.ces:addEntity(Entity:new({
-        PositionComponent:new(120, 72),
-        ImageComponent:new(love.graphics.newImage("paper1.png")),
+        PositionComponent:new(love.math.random(180), love.math.random(120)),
+        ImageComponent:new(love.graphics.newImage("test.png")),
         highlightedinteractable
     }))
 end
@@ -48,21 +62,21 @@ end
 function GameScene:update(dt)
     local btn_a = love.joystick.getJoysticks()[1]:isDown(1)
     local xAxis, yAxis = love.joystick.getJoysticks()[1]:getAxes()
+    local interactCooldown = 0.25
+    local canInteract = (love.timer.getTime() > self.lastInteraction + interactCooldown)
 
-    if math.floor(xAxis + 0.5) > 0 then
-        print("going right")
-        self.interactableSystem:requestRight()
-    elseif math.floor(xAxis + 0.5) < 0 then
-        print("going left")
-        self.interactableSystem:requestLeft()
-    end
+    if (math.round(xAxis) ~= 0 or math.round(yAxis) ~= 0) and canInteract then
+        local direction
+        if math.round(xAxis) < 0 then direction = "left" end
+        if math.round(xAxis) > 0 then direction = "right" end
+        if math.round(yAxis) < 0 then direction = "up" end
+        if math.round(yAxis) > 0 then direction = "down" end
 
-    if math.floor(yAxis + 0.5) > 0 then
-        print("giong down")
-        self.interactableSystem:requestDown()
-    elseif math.floor(yAxis + 0.5) < 0 then
-        print("going up")
-        self.interactableSystem:requestUp()
+        if direction then
+            self.interactableSystem:request(direction)
+            self.lastInteraction = love.timer.getTime()
+        end
+
     end
 
     for key, entry in ipairs(self.ces:sort()) do
